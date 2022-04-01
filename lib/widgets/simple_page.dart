@@ -54,7 +54,15 @@ class SimplePageWithFloatingButton extends StatelessWidget {
         shape: const CircularNotchedRectangle(),
         color: Colors.white,
         child: Row(
-          children: const [],
+          children: const [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Icon(
+                Icons.star,
+                color: Colors.white,
+              ),
+            )
+          ],
         ),
       ),
     );
