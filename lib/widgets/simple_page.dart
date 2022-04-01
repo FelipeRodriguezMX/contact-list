@@ -50,6 +50,13 @@ class SimplePageWithFloatingButton extends StatelessWidget {
         elevation: 0,
         child: const Icon(Icons.add),
       ),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        color: Colors.white,
+        child: Row(
+          children: const [],
+        ),
+      ),
     );
   }
 

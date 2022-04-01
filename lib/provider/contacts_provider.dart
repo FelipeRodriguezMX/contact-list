@@ -39,6 +39,19 @@ class ContactsProvider with ChangeNotifier {
     Navigator.of(context).pop();
   }
 
+  void selectFavorite(int index) {
+    if (_contactos![index].isFavorite == false) {
+      _contactos![index].isFavorite = true;
+      notifyListeners();
+      return;
+    }
+    if (_contactos![index].isFavorite == true) {
+      _contactos![index].isFavorite = false;
+      notifyListeners();
+      return;
+    }
+  }
+
   void selectContactsOnLongPress(int index) {
     if (isSelectMode == false) {
       isSelectMode = true;

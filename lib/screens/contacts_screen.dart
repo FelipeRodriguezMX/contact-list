@@ -21,6 +21,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
   final TextEditingController _telefono = TextEditingController();
   final TextEditingController _correo = TextEditingController();
   int id = -1;
+  bool? isFavorite;
   @override
   void initState() {
     super.initState();
@@ -45,6 +46,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       _telefono.text = contacto.telefono;
       _correo.text = contacto.correo;
       id = contacto.id;
+      isFavorite = contacto.isFavorite!;
     });
   }
 
@@ -56,6 +58,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       apellido: _apellidos.text,
       correo: _correo.text,
       telefono: _telefono.text,
+      isFavorite: false,
     );
     provider.addContact(context, contacto);
   }
@@ -67,6 +70,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       apellido: _apellidos.text,
       correo: _correo.text,
       telefono: _telefono.text,
+      isFavorite: isFavorite,
     );
     Provider.of<ContactsProvider>(context, listen: false)
         .editarContacto(context, contacto);
