@@ -1,6 +1,7 @@
 import 'package:contacts/models/contacts_model.dart';
 import 'package:contacts/provider/contacts_provider.dart';
 import 'package:contacts/widgets/simple_page.dart';
+import 'package:contacts/widgets/text_feild_with_validation.dart';
 import 'package:contacts/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
   final TextEditingController _apellidos = TextEditingController();
   final TextEditingController _telefono = TextEditingController();
   final TextEditingController _correo = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   int id = -1;
   bool? isFavorite;
   @override
@@ -51,6 +53,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   void guardar() {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
     final provider = Provider.of<ContactsProvider>(context, listen: false);
     final contacto = Contacts(
       id: (provider.isEmpty() == true) ? 1 : provider.contactos.length + 1,
@@ -64,6 +68,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   void editar() {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
     final contacto = Contacts(
       id: id,
       nombre: _nombre.text,
@@ -77,35 +83,40 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   void cancelar() => Navigator.of(context).pop();
+
   @override
   Widget build(BuildContext context) {
     return SimplePage(title: widget.title, child: body());
   }
 
   Widget body() {
-    return Column(
-      children: [
-        CustomInput(
-          label: 'Nombre',
-          controller: _nombre,
-          keyboardType: TextInputType.text,
-        ),
-        CustomInput(
-          label: 'Apellidos',
-          controller: _apellidos,
-        ),
-        CustomInput(
-          label: 'Telefono',
-          controller: _telefono,
-          keyboardType: TextInputType.phone,
-        ),
-        CustomInput(
-          controller: _correo,
-          label: 'Correo',
-        ),
-        const Spacer(),
-        actionButtons()
-      ],
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          InputForm(
+            keyboardType: TextInputType.text,
+            controller: _nombre,
+            hintText: 'Nombre',
+          ),
+          InputForm(
+            keyboardType: TextInputType.text,
+            controller: _apellidos,
+            hintText: 'Apellidos',
+          ),
+          InputForm(
+            keyboardType: TextInputType.phone,
+            controller: _telefono,
+            hintText: 'Telefono',
+          ),
+          CustomInput(
+            controller: _correo,
+            label: 'Correo',
+          ),
+          const Spacer(),
+          actionButtons()
+        ],
+      ),
     );
   }
 

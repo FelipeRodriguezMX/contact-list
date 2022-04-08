@@ -1,5 +1,6 @@
 import 'package:contacts/models/contacts_model.dart';
 import 'package:contacts/provider/contacts_provider.dart';
+import 'package:contacts/widgets/contact_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,77 +20,60 @@ class _ContactsListState extends State<ContactsList> {
     if (contactsProvider.selectedElements.isEmpty) {
       contactsProvider.isSelectMode = false;
     }
+    final contactsFavorites = contactsProvider.getFavorites();
+    final contactsNotFavorites = contactsProvider.getNotFavorites();
     final contacts = contactsProvider.contactos;
-    return SizedBox(
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: contacts.length,
-          itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-              onDoubleTap: () => contactsProvider.selectFavorite(index),
-              onLongPress: () =>
-                  contactsProvider.selectContactsOnLongPress(index),
-              onTap: () => contactsProvider.selectContactsOnTap(index),
-              child: contactsTile(index, contactsProvider, contacts[index]),
-            );
-          }),
-    );
-  }
-
-  Widget contactsTile(int index, ContactsProvider provider, Contacts contact) {
-    // final contact = provider.contactos[index];
-    // final contact = c;
-    return Card(
-      color: (provider.selectedElements.contains(index) == true)
-          ? Colors.redAccent
-          : Colors.grey[200],
-      elevation: 0,
-      child: ListTile(
-        leading: iconContact(),
-        title: Text('${contact.nombre} ${contact.apellido}'),
-        subtitle: Text(contact.telefono),
-        trailing: SizedBox(
-          width: 200,
-          child: actionTileContact(provider, index, contact),
-        ),
-      ),
-    );
-  }
-
-  Widget actionTileContact(ContactsProvider provider, index, Contacts contact) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        if (contact.isFavorite == true)
-          Icon(
-            Icons.star,
-            color: Colors.yellow[800],
-          ),
-        IconButton(
-          onPressed: () =>
-              provider.moveToContactScreenOnPress(context, 'Editar', index),
-          icon: const Icon(Icons.arrow_forward_ios),
-        ),
-      ],
-    );
-  }
-
-  Widget iconContact() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: Container(
-            padding: const EdgeInsets.all(5),
-            color: Colors.white,
-            child: const Icon(
-              Icons.person,
-              size: 40,
-            ),
+      children: [
+        // if (contactsFavorites.isNotEmpty)
+        SizedBox(
+          height: 80,
+          child: ContactListContent(
+            contacts: contactsFavorites,
+            scrollDirection: Axis.horizontal,
+            contactsProvider: contactsProvider,
           ),
+        ),
+        const Padding(padding: EdgeInsets.symmetric(vertical: 20)),
+        ContactListContent(
+          contacts: contactsNotFavorites,
+          scrollDirection: Axis.vertical,
+          contactsProvider: contactsProvider,
         )
       ],
+    );
+  }
+}
+
+class ContactListContent extends StatelessWidget {
+  const ContactListContent({
+    Key? key,
+    required this.contacts,
+    required this.scrollDirection,
+    required this.contactsProvider,
+  }) : super(key: key);
+  final List<Contacts> contacts;
+  final Axis scrollDirection;
+  final ContactsProvider contactsProvider;
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: contacts.length,
+      scrollDirection: scrollDirection,
+      itemBuilder: (BuildContext context, int index) {
+        return GestureDetector(
+          onDoubleTap: () => contactsProvider.selectFavorite(contacts[index]),
+          onLongPress: () =>
+              contactsProvider.selectContactsOnLongPress(contacts[index]),
+          onTap: () => contactsProvider.selectContactsOnTap(contacts[index]),
+          child: ContactTile(
+              index: index,
+              provider: contactsProvider,
+              contact: contacts[index]),
+          // child: const Text('data'),
+        );
+      },
     );
   }
 }
